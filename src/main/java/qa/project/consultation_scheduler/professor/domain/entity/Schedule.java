@@ -19,10 +19,16 @@ import java.time.LocalTime;
 @Table(name = "schedule", uniqueConstraints = {@UniqueConstraint(columnNames = {"id", "professor_id"})})
 @Data
 @Setter(AccessLevel.PACKAGE)
-@AllArgsConstructor
 @NoArgsConstructor
 @ValidTimeRange
 public class Schedule extends BaseEntity implements Comparable<Schedule> {
+
+    public Schedule(DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime, int availableSlots) {
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.availableSlots = availableSlots;
+    }
 
     @ManyToOne
     @JoinColumn(name = "professor_id", nullable = false)
@@ -31,7 +37,7 @@ public class Schedule extends BaseEntity implements Comparable<Schedule> {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @NotNull(message = "Day of week is required")
+    @ValidScheduleDay
     private DayOfWeek dayOfWeek;
 
     @Column(nullable = false)
@@ -45,10 +51,6 @@ public class Schedule extends BaseEntity implements Comparable<Schedule> {
     @ValidAvailableSlots
     @Column(nullable = false)
     private int availableSlots;
-
-    @ValidScheduleDay
-    @Column(nullable = false)
-    private int totalSlots;
 
     public boolean startsAfter(LocalDateTime dateTime) {
         if (isSameDay(dateTime)) {

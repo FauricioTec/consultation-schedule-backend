@@ -21,6 +21,11 @@ import java.time.LocalDate;
 @ValidDateRange
 public class Semester extends BaseEntity {
 
+    public Semester(LocalDate startDate, LocalDate endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     private LocalDate startDate;
 
     private LocalDate endDate;

@@ -2,6 +2,7 @@ package qa.project.consultation_scheduler.appointment.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import qa.project.consultation_scheduler._shared.BaseEntity;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
@@ -30,24 +31,30 @@ public class Appointment extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "professor_id", nullable = false)
+    @NotNull(message = "Professor is required")
     private Professor professor;
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
+    @NotNull(message = "Student is required")
     private Student student;
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
+    @NotNull(message = "Course is required")
     private Course course;
 
     @Column(nullable = false)
+    @NotNull(message = "Start is required")
     private LocalDateTime start;
 
     @Column(nullable = false)
+    @NotNull(message = "Duration is required")
     private Duration duration;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @NotNull(message = "Status is required")
     private Status status;
 
     public void accept() {

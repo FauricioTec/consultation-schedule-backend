@@ -8,6 +8,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import qa.project.consultation_scheduler.professor.aplication.service.ProfessorService;
 import qa.project.consultation_scheduler.professor.domain.entity.Professor;
 import qa.project.consultation_scheduler.professor.domain.entity.Schedule;
+import qa.project.consultation_scheduler.professor.infrastructure.request.AddScheduleReq;
+import qa.project.consultation_scheduler.professor.infrastructure.request.CreateProfessorReq;
 
 import java.net.URI;
 import java.util.List;
@@ -26,8 +28,8 @@ public class ProfessorController {
     }
 
     @PostMapping
-    public ResponseEntity<Professor> createProfessor(@Valid @RequestBody Professor professor) {
-        Professor createProfessor = professorService.createProfessor(professor);
+    public ResponseEntity<Professor> createProfessor(@Valid @RequestBody CreateProfessorReq createProfessorReq) {
+        Professor createProfessor = professorService.createProfessor(createProfessorReq.toEntity());
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(createProfessor.getId()).toUri();
         return ResponseEntity.created(location).body(createProfessor);
@@ -40,8 +42,8 @@ public class ProfessorController {
 
     @PostMapping("{id}/schedules")
     public ResponseEntity<Schedule> addConsultationSchedule(@PathVariable UUID id,
-                                                  @Valid @RequestBody Schedule schedule) {
-        Schedule createdSchedule = professorService.addConsultationSchedule(id, schedule);
+                                                            @Valid @RequestBody AddScheduleReq addScheduleReq) {
+        Schedule createdSchedule = professorService.addConsultationSchedule(id, addScheduleReq.toEntity());
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(createdSchedule.getId()).toUri();
         return ResponseEntity.created(location).body(createdSchedule);

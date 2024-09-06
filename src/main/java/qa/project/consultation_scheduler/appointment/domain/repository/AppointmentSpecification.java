@@ -1,6 +1,5 @@
 package qa.project.consultation_scheduler.appointment.domain.repository;
 
-import jdk.incubator.vector.ByteVector;
 import org.springframework.data.jpa.domain.Specification;
 import qa.project.consultation_scheduler.appointment.domain.entity.Appointment;
 

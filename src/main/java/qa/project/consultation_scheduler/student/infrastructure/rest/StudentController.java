@@ -1,16 +1,16 @@
 package qa.project.consultation_scheduler.student.infrastructure.rest;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import qa.project.consultation_scheduler.student.aplication.service.StudentService;
-import qa.project.consultation_scheduler.student.aplication.service.StudentServiceImpl;
 import qa.project.consultation_scheduler.student.domain.entity.Enrollment;
 import qa.project.consultation_scheduler.student.domain.entity.Student;
-import qa.project.consultation_scheduler.student.validation.annotation.ValidAttemptCount;
+import qa.project.consultation_scheduler.student.infrastructure.request.CreateStudentReq;
+import qa.project.consultation_scheduler.student.infrastructure.request.EnrollStudentReq;
+import qa.project.consultation_scheduler.student.infrastructure.request.UpdateStudentStarRatingReq;
 import qa.project.consultation_scheduler.student.validation.annotation.ValidStarRating;
 
 import java.net.URI;
@@ -40,8 +40,8 @@ public class StudentController {
     }
 
     @PostMapping
-    public ResponseEntity<Student> createStudent(@Valid @RequestBody Student student) {
-        Student createdStudent = studentServiceImpl.createStudent(student);
+    public ResponseEntity<Student> createStudent(@Valid @RequestBody CreateStudentReq createStudentReq) {
+        Student createdStudent = studentServiceImpl.createStudent(createStudentReq.toEntity());
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(createdStudent.getId()).toUri();
         return ResponseEntity.created(location).body(createdStudent);
@@ -59,9 +59,8 @@ public class StudentController {
 
     @PostMapping("/{id}/enrollments")
     public ResponseEntity<Enrollment> enrollStudent(@PathVariable UUID id,
-                                                    @NotNull @RequestBody UUID courseId,
-                                                    @ValidAttemptCount @RequestBody Integer attemptCount) {
-        Enrollment enrollment = studentServiceImpl.enrollStudent(id, courseId, attemptCount);
+                                                    @Valid @RequestBody EnrollStudentReq enrollStudentReq) {
+        Enrollment enrollment = studentServiceImpl.enrollStudent(id, enrollStudentReq.courseId(), enrollStudentReq.attemptCount());
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{enrollmentId}")
                 .buildAndExpand(enrollment.getId()).toUri();
         return ResponseEntity.created(location).body(enrollment);
@@ -76,7 +75,7 @@ public class StudentController {
     @PatchMapping("/{id}/enrollments/{enrollmentId}/star-rating")
     public ResponseEntity<Enrollment> updateStudentStarRating(@PathVariable UUID id,
                                                               @PathVariable UUID enrollmentId,
-                                                              @ValidStarRating @RequestBody Integer starRating) {
-        return ResponseEntity.ok(studentServiceImpl.updateStarRating(id, enrollmentId, starRating));
+                                                              @Valid @RequestBody UpdateStudentStarRatingReq updateStudentStarRatingReq) {
+        return ResponseEntity.ok(studentServiceImpl.updateStarRating(id, enrollmentId, updateStudentStarRatingReq.starRating()));
     }
 }

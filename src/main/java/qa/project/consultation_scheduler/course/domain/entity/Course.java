@@ -28,6 +28,12 @@ import java.util.List;
 @NoArgsConstructor
 public class Course extends BaseEntity {
 
+    public Course(Semester semester, String courseCode, String courseName) {
+        this.semester = semester;
+        this.courseCode = courseCode;
+        this.courseName = courseName;
+    }
+
     @OneToMany(mappedBy = "course")
     @JsonIgnore
     private List<Appointment> appointments = new ArrayList<>();
