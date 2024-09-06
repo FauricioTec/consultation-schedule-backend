@@ -51,7 +51,8 @@ public class Course extends BaseEntity {
     @JsonManagedReference
     private List<Professor> professors = new ArrayList<>();
 
-    @OneToOne(mappedBy = "course")
+    @OneToOne
+    @JoinColumn(name = "semester_id", nullable = false)
     @NotNull(message = "Semester is mandatory")
     private Semester semester;
 
