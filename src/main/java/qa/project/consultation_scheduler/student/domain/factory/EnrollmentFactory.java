@@ -6,7 +6,7 @@ import qa.project.consultation_scheduler.student.domain.entity.Student;
 
 public class EnrollmentFactory {
 
-    public static Enrollment create(Student student, Course course, int attemptCount) {
-        return new Enrollment(student, course, attemptCount);
+    public static Enrollment create(Course course, Student student, int attemptCount) {
+        return new Enrollment(course, student, attemptCount);
     }
 }

@@ -25,17 +25,16 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Professor extends BaseEntity {
+
     @OneToMany(mappedBy = "professor")
     @JsonIgnore
     private List<Appointment> appointments = new ArrayList<>();
-
 
     @ManyToMany(mappedBy = "professors")
     @JsonBackReference
     private List<Course> courses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "professor")
     private List<Schedule> schedules = new ArrayList<>();
 
     @Column(nullable = false)
@@ -60,6 +59,7 @@ public class Professor extends BaseEntity {
         return getAvailableAppointmentsCount(start, end) > 0;
     }
 
+    @JsonIgnore
     public int getAvailableAppointmentsCount(LocalDateTime start, LocalDateTime end) {
         int count = 0;
         List<Schedule> sortedSchedules = schedules.stream().sorted().toList();
@@ -88,6 +88,8 @@ public class Professor extends BaseEntity {
     }
 
     public void addCourse(Course course) {
-        courses.add(course);
+        if (!courses.contains(course)) {
+            courses.add(course); // Ensure the professor is added to the course as well.
+        }
     }
 }

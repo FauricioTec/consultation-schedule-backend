@@ -2,6 +2,7 @@ package qa.project.consultation_scheduler.student.aplication.usecase;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
 import qa.project.consultation_scheduler.course.domain.repository.CourseRepository;
 import qa.project.consultation_scheduler.student.domain.entity.Enrollment;

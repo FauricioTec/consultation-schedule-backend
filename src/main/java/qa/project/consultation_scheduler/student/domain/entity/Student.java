@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "student")
 @Data
@@ -24,12 +23,12 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Student extends BaseEntity {
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany
     @JsonIgnore
     private List<Appointment> appointments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "student")
+    @JsonManagedReference // Correcto, se gestiona desde el lado de `Enrollment`
     private List<Enrollment> enrollments = new ArrayList<>();
 
     @Column(unique = true, nullable = false)
@@ -54,7 +53,7 @@ public class Student extends BaseEntity {
         if (enrollments.stream().anyMatch(e -> e.getCourse().equals(course))) {
             throw new IllegalArgumentException("Student is already enrolled in this course");
         }
-        Enrollment enrollment = EnrollmentFactory.create(this, course, attemptCount);
+        Enrollment enrollment = new Enrollment(course, this, attemptCount); // Se pasa `this` para establecer la relación correctamente
         enrollments.add(enrollment);
     }
 

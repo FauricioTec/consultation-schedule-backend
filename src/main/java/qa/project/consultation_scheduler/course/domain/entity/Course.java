@@ -1,5 +1,6 @@
 package qa.project.consultation_scheduler.course.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,12 +29,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Course extends BaseEntity {
 
-    public Course(Semester semester, String courseCode, String courseName) {
-        this.semester = semester;
-        this.courseCode = courseCode;
-        this.courseName = courseName;
-    }
-
     @OneToMany(mappedBy = "course")
     @JsonIgnore
     private List<Appointment> appointments = new ArrayList<>();
@@ -58,25 +53,33 @@ public class Course extends BaseEntity {
 
     @Column(nullable = false)
     @NotBlank(message = "Course code is mandatory")
-    private String courseCode;
+    private String code;
 
     @Column(nullable = false)
     @NotBlank(message = "Course name is mandatory")
-    private String courseName;
+    private String name;
 
-    //Virtual attribute
+    public Course(Semester semester, String code, String name) {
+        this.semester = semester;
+        this.code = code;
+        this.name = name;
+    }
+
+    // Virtual attribute
     @JsonProperty("totalAppointments")
     public int getTotalAppointments() {
         return appointments.size();
     }
 
-    //Virtual attribute
+    // Virtual attribute
     @JsonProperty("acceptedAppointments")
     public int getAcceptedAppointments() {
-        return (int) appointments.stream().filter(a -> a.getStatus() == Status.ACCEPTED).count();
+        return (int) appointments.stream()
+                .filter(a -> a.getStatus() == Status.ACCEPTED)
+                .count();
     }
 
-    //Virtual attribute
+    // Virtual attribute
     @JsonProperty("availableAppointments")
     public int getAvailableAppointments() {
         int count = 0;
@@ -95,7 +98,9 @@ public class Course extends BaseEntity {
     }
 
     public void addProfessor(Professor professor) {
-        professor.addCourse(this);
-        professors.add(professor);
+        if (!professors.contains(professor)) {
+            professors.add(professor);
+            professor.getCourses().add(this);
+        }
     }
 }

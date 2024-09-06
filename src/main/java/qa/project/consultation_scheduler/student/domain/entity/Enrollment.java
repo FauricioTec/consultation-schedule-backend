@@ -19,13 +19,6 @@ import qa.project.consultation_scheduler.student.validation.annotation.ValidStar
 @NoArgsConstructor
 public class Enrollment extends BaseEntity {
 
-    public Enrollment(Student student, Course course,  int attemptCount) {
-        this.course = course;
-        this.student = student;
-        this.attemptCount = attemptCount;
-        this.starRating = 3;
-    }
-
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     @JsonBackReference
@@ -42,4 +35,11 @@ public class Enrollment extends BaseEntity {
     @ValidAttemptCount
     @Column(nullable = false)
     private int attemptCount;
+
+    public Enrollment(Course course, Student student, int attemptCount) {
+        this.course = course;
+        this.student = student; // Se añade el estudiante en el constructor
+        this.attemptCount = attemptCount;
+        this.starRating = 3;
+    }
 }

@@ -29,6 +29,8 @@ public class GetFilteredCoursesUseCaseImpl implements GetFilteredCoursesUseCase 
                         .and(CourseSpecification.hasConsultationDay(consultationDay))
         );
 
+        System.out.println("filteredCourses = " + filteredCourses);
+
         if (totalAppointments != null) {
             filteredCourses.removeIf(course -> course.getTotalAppointments() != totalAppointments);
         }

@@ -21,11 +21,6 @@ public class CourseServiceImpl implements CourseService{
     private final UpdateCourseSemesterEndDateUseCaseImpl updateCourseSemesterEndDateUseCase;
 
     @Override
-    public Course addProfessorToCourse(UUID courseId, UUID professorId) {
-        return addProfessorToCourseUseCase.addProfessorToCourse(courseId, professorId);
-    }
-
-    @Override
     public Course createCourse(Course course) {
         return createCourseUseCase.createCourse(course);
     }
@@ -47,6 +42,11 @@ public class CourseServiceImpl implements CourseService{
 
     @Override
     public List<Course> getFilteredCourses(String courseName, String professorName, String consultationDay, Integer totalAppointments, Integer acceptedAppointments, Integer availableAppointments) {
-        return List.of();
+        return getFilteredCoursesUseCase.getFilteredCourses(courseName, professorName, consultationDay, totalAppointments, acceptedAppointments, availableAppointments);
+    }
+
+    @Override
+    public Course addProfessorToCourse(UUID courseId, UUID professorId) {
+        return addProfessorToCourseUseCase.addProfessorToCourse(courseId, professorId);
     }
 }
