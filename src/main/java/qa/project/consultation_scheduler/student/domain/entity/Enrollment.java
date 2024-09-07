@@ -14,7 +14,7 @@ import qa.project.consultation_scheduler.student.validation.annotation.ValidStar
 @Table(name = "enrollment", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"student_id", "course_id"})
 })
-@Data
+@Getter
 @Setter(AccessLevel.PACKAGE)
 @NoArgsConstructor
 public class Enrollment extends BaseEntity {
@@ -37,8 +37,9 @@ public class Enrollment extends BaseEntity {
     private int attemptCount;
 
     public Enrollment(Course course, Student student, int attemptCount) {
+        course.addEnrollment(this);
         this.course = course;
-        this.student = student; // Se añade el estudiante en el constructor
+        this.student = student;
         this.attemptCount = attemptCount;
         this.starRating = 3;
     }

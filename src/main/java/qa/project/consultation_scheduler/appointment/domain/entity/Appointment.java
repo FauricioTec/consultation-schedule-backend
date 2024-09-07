@@ -15,19 +15,10 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "appointment")
-@Data
+@Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor
 public class Appointment extends BaseEntity {
-
-    public Appointment(Professor professor, Student student, Course course, LocalDateTime start, Duration duration) {
-        this.professor = professor;
-        this.student = student;
-        this.course = course;
-        this.start = start;
-        this.duration = duration;
-        this.status = Status.PENDING;
-    }
 
     @ManyToOne
     @JoinColumn(name = "professor_id", nullable = false)
@@ -56,6 +47,15 @@ public class Appointment extends BaseEntity {
     @Column(nullable = false)
     @NotNull(message = "Status is required")
     private Status status;
+
+    public Appointment(Professor professor, Student student, Course course, LocalDateTime start, Duration duration) {
+        this.professor = professor;
+        this.student = student;
+        this.course = course;
+        this.start = start;
+        this.duration = duration;
+        this.status = Status.PENDING;
+    }
 
     public void accept() {
         this.status = Status.ACCEPTED;

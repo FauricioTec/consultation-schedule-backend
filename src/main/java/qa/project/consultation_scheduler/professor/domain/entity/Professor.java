@@ -2,7 +2,6 @@ package qa.project.consultation_scheduler.professor.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -20,9 +19,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "professor")
-@Data
+@Getter
 @Setter(AccessLevel.PRIVATE)
-@AllArgsConstructor
 @NoArgsConstructor
 public class Professor extends BaseEntity {
 
@@ -34,7 +32,7 @@ public class Professor extends BaseEntity {
     @JsonBackReference
     private List<Course> courses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "professor")
+    @OneToMany(mappedBy = "professor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Schedule> schedules = new ArrayList<>();
 
     @Column(nullable = false)
@@ -63,15 +61,14 @@ public class Professor extends BaseEntity {
     public int getAvailableAppointmentsCount(LocalDateTime start, LocalDateTime end) {
         int count = 0;
         List<Schedule> sortedSchedules = schedules.stream().sorted().toList();
-        start = adjustStartDate(start);
-        LocalDateTime currentDateTime = start;
+        LocalDateTime currentDateTime = adjustStartDate(start);
         while (currentDateTime.isBefore(end)) {
-            count += sortedSchedules.stream().mapToInt(schedule -> schedule.getPossibleSlotsForDateTime(currentDateTime)).sum();
-            start = getNextDay(start);
+            LocalDateTime temp = currentDateTime;
+            count += sortedSchedules.stream().mapToInt(schedule -> schedule.getPossibleSlotsForDateTime(temp)).sum();
+            currentDateTime = getNextDay(currentDateTime);
         }
-        LocalDateTime temp = start;
-        count -= (int) appointments.stream().filter(
-                appointment -> appointment.getStart().isAfter(temp) && appointment.getStart().isBefore(end)).count();
+        count -= (int) appointments.stream().filter(appointment -> appointment.getStart().isAfter(start)
+                && appointment.getStart().isBefore(end)).count();
         return count;
     }
 
@@ -83,8 +80,9 @@ public class Professor extends BaseEntity {
     }
 
     private LocalDateTime getNextDay(LocalDateTime date) {
-        return date.getDayOfWeek() == DayOfWeek.FRIDAY ? date.with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.MIN)
-                : date.with(TemporalAdjusters.next(date.getDayOfWeek())).with(LocalTime.MIN);
+        return date.getDayOfWeek() == DayOfWeek.FRIDAY ?
+                date.with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.MIN)
+                : date.plusDays(1).with(LocalTime.MIN);
     }
 
     public void addCourse(Course course) {

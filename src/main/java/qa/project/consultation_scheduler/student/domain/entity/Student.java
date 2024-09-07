@@ -16,9 +16,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "student")
-@Data
+@Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor
 public class Student extends BaseEntity {
@@ -27,8 +28,8 @@ public class Student extends BaseEntity {
     @JsonIgnore
     private List<Appointment> appointments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "student")
-    @JsonManagedReference // Correcto, se gestiona desde el lado de `Enrollment`
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Enrollment> enrollments = new ArrayList<>();
 
     @Column(unique = true, nullable = false)

@@ -1,10 +1,7 @@
 package qa.project.consultation_scheduler.course.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import qa.project.consultation_scheduler._shared.BaseEntity;
@@ -12,12 +9,10 @@ import qa.project.consultation_scheduler.course.validation.annotation.ValidDateR
 
 import java.time.LocalDate;
 
-@EqualsAndHashCode(callSuper = true)
-@Entity
-@Table(name = "semester")
+@Embeddable
 @Data
 @NoArgsConstructor
-public class Semester extends BaseEntity {
+public class Semester {
 
     @NotNull
     private LocalDate startDate;

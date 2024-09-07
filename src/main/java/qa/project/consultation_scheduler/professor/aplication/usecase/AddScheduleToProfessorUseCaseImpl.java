@@ -12,7 +12,6 @@ import java.util.UUID;
 @Component
 @AllArgsConstructor
 public class AddScheduleToProfessorUseCaseImpl implements AddScheduleToProfessorUseCase {
-
     private final ProfessorRepository professorRepository;
 
     @Override
@@ -22,11 +21,12 @@ public class AddScheduleToProfessorUseCaseImpl implements AddScheduleToProfessor
         );
         try {
             professor.addSchedule(schedule);
-            professorRepository.save(professor);
-            return schedule;
+            return professorRepository.save(professor).getSchedules().stream()
+                    .filter(s -> s.compareTo(schedule) == 0)
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Error adding schedule to professor"));
         } catch (Exception e) {
-            throw new RuntimeException("Error adding schedule to professor");
+            throw new RuntimeException("Error adding schedule to professor", e);
         }
     }
-
 }

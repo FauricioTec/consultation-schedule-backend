@@ -1,6 +1,7 @@
 package qa.project.consultation_scheduler.professor.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -40,11 +41,9 @@ public class Schedule extends BaseEntity implements Comparable<Schedule> {
     @ValidScheduleDay
     private DayOfWeek dayOfWeek;
 
-    @Column(nullable = false)
     @NotNull(message = "Start time is required")
     private LocalTime startTime;
 
-    @Column(nullable = false)
     @NotNull(message = "End time is required")
     private LocalTime endTime;
 
@@ -59,6 +58,7 @@ public class Schedule extends BaseEntity implements Comparable<Schedule> {
         return dateTime.getDayOfWeek().getValue() < dayOfWeek.getValue();
     }
 
+    @JsonIgnore
     public int getDuration() {
         return (int) startTime.until(endTime, java.time.temporal.ChronoUnit.MINUTES);
     }
@@ -75,9 +75,7 @@ public class Schedule extends BaseEntity implements Comparable<Schedule> {
     }
 
     public boolean contains(LocalDateTime dateTime) {
-        return dateTime.getDayOfWeek().equals(dayOfWeek)
-                && !dateTime.toLocalTime().isBefore(startTime)
-                && dateTime.toLocalTime().isBefore(endTime);
+        return dateTime.getDayOfWeek().equals(dayOfWeek) && !dateTime.toLocalTime().isBefore(startTime) && dateTime.toLocalTime().isBefore(endTime);
     }
 
     public boolean overlaps(Schedule schedule) {

@@ -24,8 +24,8 @@ import java.util.List;
 @Entity
 @Table(name = "course")
 @Data
+@Getter
 @Setter(AccessLevel.PRIVATE)
-@AllArgsConstructor
 @NoArgsConstructor
 public class Course extends BaseEntity {
 
@@ -46,8 +46,7 @@ public class Course extends BaseEntity {
     @JsonManagedReference
     private List<Professor> professors = new ArrayList<>();
 
-    @OneToOne
-    @JoinColumn(name = "semester_id", nullable = false)
+    @Embedded
     @NotNull(message = "Semester is mandatory")
     private Semester semester;
 
@@ -97,10 +96,16 @@ public class Course extends BaseEntity {
         semester.setEndDate(endDate);
     }
 
+    public void addEnrollment(Enrollment enrollment) {
+        if (!enrollments.contains(enrollment)) {
+            enrollments.add(enrollment);
+        }
+    }
+
     public void addProfessor(Professor professor) {
         if (!professors.contains(professor)) {
             professors.add(professor);
-            professor.getCourses().add(this);
+            professor.addCourse(this);
         }
     }
 }
