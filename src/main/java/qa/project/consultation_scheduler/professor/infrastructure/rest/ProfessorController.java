@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("/professors")
 @AllArgsConstructor
