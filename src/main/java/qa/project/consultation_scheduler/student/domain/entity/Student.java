@@ -44,9 +44,9 @@ public class Student extends BaseEntity {
     @NotNull
     private String campus;
 
-    public Student(String name, String idCardNumber, String campus) {
+    public Student(String name, String idCard, String campus) {
         this.name = name;
-        this.idCard = idCardNumber;
+        this.idCard = idCard;
         this.campus = campus;
     }
 
