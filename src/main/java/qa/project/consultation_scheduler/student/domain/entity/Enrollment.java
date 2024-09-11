@@ -40,6 +40,6 @@ public class Enrollment extends BaseEntity {
         this.course = course;
         this.student = student;
         this.attemptCount = attemptCount;
-        this.starRating = 3;
+        this.starRating = 1;
     }
 }
