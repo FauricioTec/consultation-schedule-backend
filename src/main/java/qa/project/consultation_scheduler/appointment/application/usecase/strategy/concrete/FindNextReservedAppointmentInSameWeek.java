@@ -26,6 +26,7 @@ public class FindNextReservedAppointmentInSameWeek extends FindAppointmentStrate
         Optional<Appointment> appointment = reservedAppointments.stream()
                 .filter(reservedAppointment -> reservedAppointment.getStart().isAfter(from))
                 .filter(reservedAppointment -> isSameWeek(from, reservedAppointment.getStart()))
+                .filter(reservedAppointment -> !reservedAppointment.getStudent().equals(student))
                 .findFirst();
 
         if (appointment.isPresent()) {

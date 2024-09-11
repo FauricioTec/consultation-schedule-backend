@@ -25,8 +25,13 @@ public class FindNextReservedAppointmentInNextWeek extends FindAppointmentStrate
                 .filter(appointment -> appointment.getStatus() == Status.ACCEPTED)
                 .toList();
 
+        LocalDateTime nextMonday = from.with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.MIN);
+        LocalDateTime nextSunday = nextMonday.with(TemporalAdjusters.next(DayOfWeek.SUNDAY)).with(LocalTime.MAX);
+
         Optional<Appointment> appointment = reservedAppointments.stream()
-                .filter(reservedAppointment -> reservedAppointment.getStart().isAfter(from.with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.MIN)))
+                .filter(reservedAppointment -> reservedAppointment.getStart().isAfter(nextMonday))
+                .filter(reservedAppointment -> reservedAppointment.getStart().isBefore(nextSunday))
+                .filter(reservedAppointment -> !reservedAppointment.getStudent().equals(student))
                 .findFirst();
 
         if (appointment.isPresent()) {
