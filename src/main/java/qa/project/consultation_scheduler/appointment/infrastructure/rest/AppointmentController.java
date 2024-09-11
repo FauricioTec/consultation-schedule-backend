@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import qa.project.consultation_scheduler.appointment.aplication.service.AppointmentService;
+import qa.project.consultation_scheduler.appointment.application.service.AppointmentService;
 import qa.project.consultation_scheduler.appointment.domain.entity.Appointment;
 
 import java.net.URI;

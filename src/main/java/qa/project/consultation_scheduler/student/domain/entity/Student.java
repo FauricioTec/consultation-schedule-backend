@@ -9,10 +9,7 @@ import qa.project.consultation_scheduler._common.BaseEntity;
 import qa.project.consultation_scheduler.appointment.domain.entity.Appointment;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -74,6 +71,20 @@ public class Student extends BaseEntity {
     public Optional<Enrollment> getEnrollment(UUID enrollmentId) {
         return enrollments.stream()
                 .filter(e -> e.getId().equals(enrollmentId))
+                .findFirst();
+    }
+
+    public OptionalInt getStarRatingForCourse(Course course) {
+        return enrollments.stream()
+                .filter(e -> e.getCourse().equals(course))
+                .mapToInt(Enrollment::getStarRating)
+                .findFirst();
+    }
+
+    public OptionalInt getAttemptCountForCourse(Course course) {
+        return enrollments.stream()
+                .filter(e -> e.getCourse().equals(course))
+                .mapToInt(Enrollment::getAttemptCount)
                 .findFirst();
     }
 }

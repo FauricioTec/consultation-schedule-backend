@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import qa.project.consultation_scheduler.course.aplication.service.CourseService;
+import qa.project.consultation_scheduler.course.application.service.CourseService;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
 import qa.project.consultation_scheduler.course.infrastructure.request.AddProfessorToCourseReq;
 import qa.project.consultation_scheduler.course.infrastructure.request.CreateCourseReq;

@@ -56,6 +56,11 @@ public class Appointment extends BaseEntity {
         this.status = Status.PENDING;
     }
 
+    public void reassign(Student student) {
+        this.student = student;
+        this.status = Status.PENDING;
+    }
+
     public void accept() {
         this.status = Status.ACCEPTED;
     }
