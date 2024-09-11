@@ -57,6 +57,11 @@ public class Appointment extends BaseEntity {
         this.status = Status.PENDING;
     }
 
+    @JsonProperty("durationInMinutes")
+    public long getDurationInMinutes() {
+        return this.duration.toMinutes();
+    }
+
     @JsonProperty("end")
     public LocalDateTime getEnd() {
         return this.start.plus(this.duration);

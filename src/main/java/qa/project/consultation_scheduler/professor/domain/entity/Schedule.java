@@ -84,15 +84,18 @@ public class Schedule extends BaseEntity implements Comparable<Schedule> {
 
     public int getPossibleSlotsForDateTime(LocalDateTime dateTime) {
         if (isSameDay(dateTime)) {
-            if (isAfter(dateTime)) {
+            LocalTime currentTime = dateTime.toLocalTime();
+            if (currentTime.isBefore(startTime)) {
                 return availableSlots;
             }
             if (contains(dateTime)) {
+                // Calculate the number of remaining slots if the time is within the range
                 int eachAppointmentDuration = getDuration() / getAvailableSlots();
-                int durationUntilEnd = (int) Duration.between(dateTime, getEndTime()).toMinutes();
-                return durationUntilEnd / eachAppointmentDuration;
+                int minutesUntilEnd = (int) Duration.between(currentTime, endTime).toMinutes();
+                return minutesUntilEnd / eachAppointmentDuration;
             }
         }
+        // Return 0 if the date does not match the schedule's day or the time is outside the range
         return 0;
     }
 
