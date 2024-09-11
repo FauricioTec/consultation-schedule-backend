@@ -1,23 +1,21 @@
 package qa.project.consultation_scheduler.appointment.application.service;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import qa.project.consultation_scheduler.appointment.application.usecase.AcceptAppointmentUseCaseImpl;
-import qa.project.consultation_scheduler.appointment.application.usecase.GetFilteredAppointmentsUseCaseImpl;
-import qa.project.consultation_scheduler.appointment.application.usecase.GetNextAppointmentUseCaseImpl;
+import lombok.Builder;
 import qa.project.consultation_scheduler.appointment.domain.entity.Appointment;
+import qa.project.consultation_scheduler.appointment.domain.usecase.AcceptAppointmentUseCase;
+import qa.project.consultation_scheduler.appointment.domain.usecase.GetFilteredAppointmentsUseCase;
+import qa.project.consultation_scheduler.appointment.domain.usecase.GetNextAppointmentUseCase;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Service
-@AllArgsConstructor
+@Builder
 public class AppointmentServiceImpl implements AppointmentService {
 
-    private final AcceptAppointmentUseCaseImpl acceptAppointmentUseCase;
-    private final GetFilteredAppointmentsUseCaseImpl getFilteredAppointmentsUseCase;
-    private final GetNextAppointmentUseCaseImpl getNextAppointmentUseCase;
+    private final AcceptAppointmentUseCase acceptAppointmentUseCase;
+    private final GetFilteredAppointmentsUseCase getFilteredAppointmentsUseCase;
+    private final GetNextAppointmentUseCase getNextAppointmentUseCase;
 
     @Override
     public Appointment acceptAppointment(UUID appointmentId) {

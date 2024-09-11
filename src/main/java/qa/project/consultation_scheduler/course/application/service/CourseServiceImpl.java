@@ -1,24 +1,22 @@
 package qa.project.consultation_scheduler.course.application.service;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import qa.project.consultation_scheduler.course.application.usecase.*;
+import lombok.Builder;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
+import qa.project.consultation_scheduler.course.domain.usecase.*;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-@Service
-@AllArgsConstructor
-public class CourseServiceImpl implements CourseService{
+@Builder
+public class CourseServiceImpl implements CourseService {
 
-    private final AddProfessorToCourseUseCaseImpl addProfessorToCourseUseCase;
-    private final CreateCourseUseCaseImpl createCourseUseCase;
-    private final GetAllCoursesUseCaseImpl getAllCoursesUseCase;
-    private final GetCourseByIdUseCaseImpl getCourseByIdUseCase;
-    private final GetFilteredCoursesUseCaseImpl getFilteredCoursesUseCase;
-    private final UpdateCourseSemesterEndDateUseCaseImpl updateCourseSemesterEndDateUseCase;
+    private final AddProfessorToCourseUseCase addProfessorToCourseUseCase;
+    private final CreateCourseUseCase createCourseUseCase;
+    private final GetAllCoursesUseCase getAllCoursesUseCase;
+    private final GetCourseByIdUseCase getCourseByIdUseCase;
+    private final GetFilteredCoursesUseCase getFilteredCoursesUseCase;
+    private final UpdateCourseSemesterEndDateUseCase updateCourseSemesterEndDateUseCase;
 
     @Override
     public Course createCourse(Course course) {

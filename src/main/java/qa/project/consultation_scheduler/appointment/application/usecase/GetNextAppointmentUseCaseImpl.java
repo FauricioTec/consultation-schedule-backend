@@ -1,7 +1,6 @@
 package qa.project.consultation_scheduler.appointment.application.usecase;
 
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
 import qa.project.consultation_scheduler.appointment.application.usecase.strategy.FindAppointmentContext;
 import qa.project.consultation_scheduler.appointment.application.usecase.strategy.FindAppointmentStrategy;
 import qa.project.consultation_scheduler.appointment.application.usecase.strategy.concrete.*;
@@ -17,7 +16,7 @@ import qa.project.consultation_scheduler.student.domain.repository.StudentReposi
 import java.time.LocalDateTime;
 import java.util.*;
 
-@Component
+
 @AllArgsConstructor
 public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase {
 

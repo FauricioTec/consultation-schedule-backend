@@ -1,25 +1,23 @@
 package qa.project.consultation_scheduler.professor.application.service;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
-import qa.project.consultation_scheduler.professor.application.usecase.AddScheduleToProfessorUseCaseImpl;
-import qa.project.consultation_scheduler.professor.application.usecase.CreateProfessorUseCaseImpl;
-import qa.project.consultation_scheduler.professor.application.usecase.GetAllProfessorsUseCaseImpl;
-import qa.project.consultation_scheduler.professor.application.usecase.GetProfessorByIdUseCaseImpl;
+import lombok.Builder;
 import qa.project.consultation_scheduler.professor.domain.entity.Professor;
 import qa.project.consultation_scheduler.professor.domain.entity.Schedule;
+import qa.project.consultation_scheduler.professor.domain.usecase.AddScheduleToProfessorUseCase;
+import qa.project.consultation_scheduler.professor.domain.usecase.CreateProfessorUseCase;
+import qa.project.consultation_scheduler.professor.domain.usecase.GetAllProfessorsUseCase;
+import qa.project.consultation_scheduler.professor.domain.usecase.GetProfessorByIdUseCase;
 
 import java.util.List;
 import java.util.UUID;
 
-@Service
-@AllArgsConstructor
+@Builder
 public class ProfessorServiceImpl implements ProfessorService {
 
-    private final AddScheduleToProfessorUseCaseImpl addScheduleToProfessorUseCase;
-    private final CreateProfessorUseCaseImpl createProfessorUseCase;
-    private final GetAllProfessorsUseCaseImpl getAllProfessorsUseCase;
-    private final GetProfessorByIdUseCaseImpl getProfessorByIdUseCase;
+    private final AddScheduleToProfessorUseCase addScheduleToProfessorUseCase;
+    private final CreateProfessorUseCase createProfessorUseCase;
+    private final GetAllProfessorsUseCase getAllProfessorsUseCase;
+    private final GetProfessorByIdUseCase getProfessorByIdUseCase;
 
     @Override
     public Schedule addConsultationSchedule(UUID professorId, Schedule schedule) {

@@ -1,7 +1,6 @@
 package qa.project.consultation_scheduler.student.application.service;
 
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
+import lombok.Builder;
 import qa.project.consultation_scheduler.student.application.usecase.*;
 import qa.project.consultation_scheduler.student.domain.entity.Enrollment;
 import qa.project.consultation_scheduler.student.domain.entity.Student;
@@ -9,8 +8,7 @@ import qa.project.consultation_scheduler.student.domain.entity.Student;
 import java.util.List;
 import java.util.UUID;
 
-@Service
-@AllArgsConstructor
+@Builder
 public class StudentServiceImpl implements StudentService {
 
     private final CreateStudentUseCaseImpl createStudentUseCase;
@@ -19,9 +17,8 @@ public class StudentServiceImpl implements StudentService {
     private final EnrollStudentUseCaseImpl enrollStudentUseCase;
     private final GetFilteredStudentsUseCaseImpl getFilteredStudentsUseCase;
     private final GetAllEnrollmentsUseCaseImpl getAllEnrollmentsUseCase;
-    private final GetEnrollmentByIdUseCaseImpl getEnrollmentUseCase;
+    private final GetEnrollmentByIdUseCaseImpl getEnrollmentByIdUseCase;
     private final UpdateStarRatingUseCaseImpl updateStarRatingUseCase;
-
 
     @Override
     public Student createStudent(Student student) {
@@ -45,7 +42,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Enrollment getStudentEnrollment(UUID studentId, UUID enrollmentId) {
-        return getEnrollmentUseCase.getStudentEnrollment(studentId, enrollmentId);
+        return getEnrollmentByIdUseCase.getStudentEnrollment(studentId, enrollmentId);
     }
 
     @Override

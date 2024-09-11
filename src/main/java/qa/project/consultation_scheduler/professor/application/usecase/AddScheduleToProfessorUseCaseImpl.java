@@ -1,7 +1,6 @@
 package qa.project.consultation_scheduler.professor.application.usecase;
 
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
 import qa.project.consultation_scheduler.professor.domain.entity.Professor;
 import qa.project.consultation_scheduler.professor.domain.entity.Schedule;
 import qa.project.consultation_scheduler.professor.domain.repository.ProfessorRepository;
@@ -9,7 +8,6 @@ import qa.project.consultation_scheduler.professor.domain.usecase.AddScheduleToP
 
 import java.util.UUID;
 
-@Component
 @AllArgsConstructor
 public class AddScheduleToProfessorUseCaseImpl implements AddScheduleToProfessorUseCase {
     private final ProfessorRepository professorRepository;
