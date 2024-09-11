@@ -8,9 +8,9 @@ import qa.project.consultation_scheduler.appointment.domain.entity.Status;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
 import qa.project.consultation_scheduler.student.domain.entity.Student;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, UUID>, JpaSpecificationExecutor<Appointment> {
-    Optional<Appointment> findByStatusAndStudentAndCourse(@NotNull Status status, @NotNull Student student, @NotNull Course course);
+    List<Appointment> findAllByStatusAndStudentAndCourse(@NotNull Status status, @NotNull Student student, @NotNull Course course);
 }

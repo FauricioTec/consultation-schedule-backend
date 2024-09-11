@@ -30,7 +30,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment getNextAppointment(UUID studentId, UUID courseId) {
-        return getNextAppointmentUseCase.getNextAppointment(studentId, courseId);
+    public Appointment getNextAppointment(UUID studentId, UUID courseId, LocalDateTime from) {
+        return getNextAppointmentUseCase.getNextAppointment(studentId, courseId, from);
     }
 }

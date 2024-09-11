@@ -26,14 +26,17 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
     private final CourseRepository courseRepository;
 
     @Override
-    public Appointment getNextAppointment(UUID studentId, UUID courseId) {
+    public Appointment getNextAppointment(UUID studentId, UUID courseId, LocalDateTime from) {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
 
         validateEnrollmentAndAvailability(student, course);
-        LocalDateTime from = determineStartDateTime(student, course);
 
-        Appointment appointment = findAppointmentByPriority(student, course, from)
+        appointmentRepository.deleteAll(appointmentRepository.findAllByStatusAndStudentAndCourse(Status.PENDING, student, course));
+
+        LocalDateTime startDateTime = from == null ? LocalDateTime.now() : from;
+
+        Appointment appointment = findAppointmentByPriority(student, course, startDateTime)
                 .orElseThrow(() -> new RuntimeException("No available appointments"));
 
         try {
@@ -41,19 +44,6 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
         } catch (Exception e) {
             throw new RuntimeException("Appointment could not be retrieved");
         }
-    }
-
-    private LocalDateTime determineStartDateTime(Student student, Course course) {
-        Optional<Appointment> pendingAppointment = appointmentRepository.findByStatusAndStudentAndCourse(Status.PENDING, student, course);
-        return pendingAppointment.filter(appointment -> appointment.getStart().isAfter(LocalDateTime.now()))
-                .map(appointment -> {
-                    appointmentRepository.delete(appointment);
-                    return appointment.getStart();
-                })
-                .orElseGet(() -> {
-                    pendingAppointment.ifPresent(appointmentRepository::delete);
-                    return LocalDateTime.now();
-                });
     }
 
     private Optional<Appointment> findAppointmentByPriority(Student student, Course course, LocalDateTime from) {

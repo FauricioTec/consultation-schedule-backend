@@ -1,5 +1,6 @@
 package qa.project.consultation_scheduler.appointment.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -54,6 +55,11 @@ public class Appointment extends BaseEntity {
         this.start = start;
         this.duration = duration;
         this.status = Status.PENDING;
+    }
+
+    @JsonProperty("end")
+    public LocalDateTime getEnd() {
+        return this.start.plus(this.duration);
     }
 
     public void reassign(Student student) {
