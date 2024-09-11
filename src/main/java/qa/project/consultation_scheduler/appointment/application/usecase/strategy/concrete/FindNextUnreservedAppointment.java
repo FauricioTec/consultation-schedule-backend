@@ -27,18 +27,16 @@ public class FindNextUnreservedAppointment extends FindAppointmentStrategy {
                 .filter(professor -> professor.getAvailableAppointmentsCount(from, course.getSemester().getEndDate().atTime(LocalTime.MAX)) > 0)
                 .flatMap(professor -> professor.getSchedules().stream())
                 .sorted()
-                .toList(); //Obtener primer profesor con horario disponible
-
-        LocalDateTime currentDateTime = from;
-        LocalDateTime endOfSemester = course.getSemester().getEndDate().atTime(LocalTime.MAX);
+                .toList();
 
         if (consultationSchedules.isEmpty()) {
             return Optional.empty();
         }
 
-        if (currentDateTime.getDayOfWeek() == DayOfWeek.SATURDAY || currentDateTime.getDayOfWeek() == DayOfWeek.SUNDAY) {
-            currentDateTime = currentDateTime.with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.MIN);
-        }
+        LocalDateTime currentDateTime = from;
+        LocalDateTime endOfSemester = course.getSemester().getEndDate().atTime(LocalTime.MAX);
+
+        currentDateTime = adjustStartDateTime(currentDateTime);
 
         while (currentDateTime.isBefore(endOfSemester)) {
             Optional<Appointment> appointment = findAvailableSlotInSchedules(consultationSchedules, currentDateTime, student, course);
@@ -47,14 +45,21 @@ public class FindNextUnreservedAppointment extends FindAppointmentStrategy {
                 return appointment;
             }
 
-            if (currentDateTime.getDayOfWeek() == DayOfWeek.FRIDAY) {
-                currentDateTime = currentDateTime.with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.MIN);
-            } else {
-                currentDateTime = currentDateTime.plusDays(1).with(LocalTime.MIN);
-            }
+            currentDateTime = getNextDay(currentDateTime);
         }
 
         return Optional.empty();
+    }
+
+    private LocalDateTime adjustStartDateTime(LocalDateTime from) {
+        return from.getDayOfWeek() == DayOfWeek.SATURDAY || from.getDayOfWeek() == DayOfWeek.SUNDAY ?
+                from.with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.MIN) : from;
+    }
+
+    private LocalDateTime getNextDay(LocalDateTime currentDateTime) {
+        return currentDateTime.getDayOfWeek() == DayOfWeek.FRIDAY ?
+                currentDateTime.with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.MIN) :
+                currentDateTime.plusDays(1).with(LocalTime.MIN);
     }
 
     private Optional<Appointment> findAvailableSlotInSchedules(List<Schedule> schedules, LocalDateTime
@@ -87,7 +92,7 @@ public class FindNextUnreservedAppointment extends FindAppointmentStrategy {
         return Optional.empty();
     }
 
-    public Optional<Appointment> generateAppointmentSlot(Student student, Course course, Schedule
+    private Optional<Appointment> generateAppointmentSlot(Student student, Course course, Schedule
             schedule, LocalDateTime currentDateTime) {
         int slotCount = schedule.getAvailableSlots();
         int slotDurationMinutes = schedule.getDuration() / slotCount;
@@ -110,7 +115,7 @@ public class FindNextUnreservedAppointment extends FindAppointmentStrategy {
         return Optional.empty();
     }
 
-    public boolean validateOverlapping(List<Appointment> appointments, Appointment appointment) {
+    private boolean validateOverlapping(List<Appointment> appointments, Appointment appointment) {
         return appointments.stream().anyMatch(appointment::overlaps);
     }
 }
