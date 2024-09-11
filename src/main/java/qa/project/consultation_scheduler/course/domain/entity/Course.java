@@ -1,6 +1,5 @@
 package qa.project.consultation_scheduler.course.domain.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,7 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import qa.project.consultation_scheduler._shared.BaseEntity;
+import qa.project.consultation_scheduler._common.BaseEntity;
 import qa.project.consultation_scheduler.appointment.domain.entity.Appointment;
 import qa.project.consultation_scheduler.appointment.domain.entity.Status;
 import qa.project.consultation_scheduler.professor.domain.entity.Professor;

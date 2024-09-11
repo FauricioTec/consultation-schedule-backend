@@ -1,10 +1,9 @@
 package qa.project.consultation_scheduler.student.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-import qa.project.consultation_scheduler._shared.BaseEntity;
+import qa.project.consultation_scheduler._common.BaseEntity;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
 import qa.project.consultation_scheduler.student.validation.annotation.ValidAttemptCount;
 import qa.project.consultation_scheduler.student.validation.annotation.ValidStarRating;

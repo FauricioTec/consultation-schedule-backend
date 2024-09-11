@@ -22,22 +22,18 @@ public class AppointmentController {
 
     @GetMapping("/results")
     public ResponseEntity<List<Appointment>> getAppointmentsReport(@RequestParam(required = false) String studentIdCard,
-                                                         @RequestParam(required = false) String courseName,
-                                                         @RequestParam(required = false) String professorName,
-                                                         @RequestParam(required = false) LocalDateTime startDateTime) {
+                                                                   @RequestParam(required = false) String courseName,
+                                                                   @RequestParam(required = false) String professorName,
+                                                                   @RequestParam(required = false) LocalDateTime startDateTime) {
         return ResponseEntity.ok(appointmentService.getFilteredAppointments(studentIdCard, courseName, professorName, startDateTime));
     }
 
     @GetMapping("/next")
     public ResponseEntity<Appointment> getNextAppointment(@RequestParam UUID studentId,
-                                                             @RequestParam UUID courseId,
-                                                             @RequestParam(required = false) UUID lastAppointmentId) {
-        Appointment createdAppointment;
-        if (lastAppointmentId == null) {
-            createdAppointment = appointmentService.getNextAppointment(studentId, courseId);
-        } else {
-            createdAppointment = appointmentService.getNextAppointment(studentId, courseId, lastAppointmentId);
-        }
+                                                          @RequestParam UUID courseId
+    ) {
+        Appointment createdAppointment = appointmentService.getNextAppointment(studentId, courseId);
+
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(createdAppointment.getId()).toUri();
         return ResponseEntity.created(location).body(createdAppointment);

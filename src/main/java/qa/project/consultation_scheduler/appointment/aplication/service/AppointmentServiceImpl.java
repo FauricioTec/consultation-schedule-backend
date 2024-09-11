@@ -33,9 +33,4 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment getNextAppointment(UUID studentId, UUID courseId) {
         return getNextAppointmentUseCase.getNextAppointment(studentId, courseId);
     }
-
-    @Override
-    public Appointment getNextAppointment(UUID studentId, UUID courseId, UUID appointmentId) {
-        return getNextAppointmentUseCase.getNextAppointment(studentId, courseId, appointmentId);
-    }
 }

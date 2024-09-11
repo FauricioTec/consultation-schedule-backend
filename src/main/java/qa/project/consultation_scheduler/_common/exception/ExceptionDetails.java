@@ -1,4 +1,4 @@
-package qa.project.consultation_scheduler._shared.exception;
+package qa.project.consultation_scheduler._common.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

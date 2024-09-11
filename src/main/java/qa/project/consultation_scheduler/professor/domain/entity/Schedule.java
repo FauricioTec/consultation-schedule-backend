@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import qa.project.consultation_scheduler._shared.BaseEntity;
+import qa.project.consultation_scheduler._common.BaseEntity;
 import qa.project.consultation_scheduler.professor.validation.annotation.ValidAvailableSlots;
 import qa.project.consultation_scheduler.professor.validation.annotation.ValidScheduleDay;
 import qa.project.consultation_scheduler.professor.validation.annotation.ValidTimeRange;

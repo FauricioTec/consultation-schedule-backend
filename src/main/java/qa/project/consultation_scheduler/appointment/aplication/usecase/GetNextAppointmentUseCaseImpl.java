@@ -34,9 +34,8 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
     public Appointment getNextAppointment(UUID studentId, UUID courseId) {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
-
         validateStudentAndCourse(student, course);
-        LocalDateTime from = LocalDateTime.now();
+        LocalDateTime from = getFromDateTime(student, course);
         Appointment appointment = findNextAppointment(student, course, from).orElseThrow(() -> new RuntimeException("No available appointments"));
         try {
             return appointmentRepository.save(appointment);
@@ -45,23 +44,17 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
         }
     }
 
-    @Override
-    public Appointment getNextAppointment(UUID studentId, UUID courseId, UUID appointmentId) {
-        Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
-        Appointment appointment = appointmentRepository.findById(appointmentId).orElseThrow(() -> new RuntimeException("Appointment not found"));
-
-        validateStudentAndCourse(student, course);
-        validatePendingAppointment(appointment, student, course);
-
-        LocalDateTime from = appointment.getStart();
-        appointmentRepository.delete(appointment);
-        Appointment nextAppointment = findNextAppointment(student, course, from).orElseThrow(() -> new RuntimeException("No available appointments"));
-        try {
-            return appointmentRepository.save(nextAppointment);
-        } catch (Exception e) {
-            throw new RuntimeException("Appointment could not be retrieved");
-        }
+    private LocalDateTime getFromDateTime(Student student, Course course) {
+        Optional<Appointment> pendingAppointment = appointmentRepository.findByStatusAndStudentAndCourse(Status.PENDING, student, course);
+        return pendingAppointment.filter(appointment -> appointment.getStart().isAfter(LocalDateTime.now()))
+                .map(appointment -> {
+                    appointmentRepository.delete(appointment);
+                    return appointment.getStart();
+                })
+                .orElseGet(() -> {
+                    pendingAppointment.ifPresent(appointmentRepository::delete);
+                    return LocalDateTime.now();
+                });
     }
 
     //TODO: Aqui deberia implementarse la logica relacionada a la prioridad de los estudiantes
@@ -102,15 +95,6 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
         return Optional.empty();
     }
 
-    /**
-     * Este metodo busca un horario disponible en los horarios de consulta de los profesores, que coincidan con el dia actual
-     *
-     * @param schedules       Lista de horarios de consulta de los profesores
-     * @param currentDateTime Fecha y hora actual
-     * @param student         Estudiante que solicita la cita
-     * @param course          Curso al que esta inscrito el estudiante
-     * @return Un Optional con la cita disponible, si no hay citas disponibles, retorna un Optional vacio
-     */
     private Optional<Appointment> findAvailableSlotInSchedules(List<Schedule> schedules, LocalDateTime currentDateTime, Student student, Course course) {
         for (Schedule schedule : schedules) {
             if (schedule.isSameDay(currentDateTime) && (schedule.startsAfter(currentDateTime) || schedule.contains(currentDateTime))) {
@@ -123,15 +107,6 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
         return Optional.empty();
     }
 
-    /**
-     * Este metodo itera sobre el horario de consulta del profesor, buscando un espacio disponible para una cita
-     *
-     * @param student  Estudiante que solicita la cita
-     * @param course   Curso al que esta inscrito el estudiante
-     * @param schedule Horario de consulta del profesor
-     * @param from     Fecha y hora actual
-     * @return Un Optional con la cita disponible, si no hay citas disponibles, retorna un Optional vacio
-     */
     private Optional<Appointment> findAppointmentSlotInSchedule(Student student, Course course, Schedule schedule, LocalDateTime from) {
         LocalDateTime currentDateTime = from;
         while (currentDateTime.isBefore(LocalDateTime.of(currentDateTime.toLocalDate(), schedule.getEndTime()))) {
@@ -148,15 +123,6 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
         return Optional.empty();
     }
 
-    /**
-     * Este metodo genera un espacio disponible para una cita en el horario de consulta del profesor
-     *
-     * @param student         Estudiante que solicita la cita
-     * @param course          Curso al que esta inscrito el estudiante
-     * @param schedule        Horario de consulta del profesor
-     * @param currentDateTime Fecha y hora actual
-     * @return Un Optional con la cita disponible, si no hay citas disponibles, retorna un Optional vacio
-     */
     public Optional<Appointment> generateAppointmentSlot(Student student, Course course, Schedule schedule, LocalDateTime currentDateTime) {
         int slotCount = schedule.getAvailableSlots();
         int slotDurationMinutes = schedule.getDuration() / slotCount;
@@ -189,15 +155,6 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
         }
         if (course.getAvailableAppointments() == 0) {
             throw new RuntimeException("No available appointments");
-        }
-    }
-
-    private void validatePendingAppointment(Appointment appointment, Student student, Course course) {
-        if (appointment.getStatus() != Status.PENDING) {
-            throw new RuntimeException("Appointment is not pending");
-        }
-        if (!appointment.getStudent().equals(student) || !appointment.getCourse().equals(course)) {
-            throw new RuntimeException("Appointment does not belong to student or course");
         }
     }
 }

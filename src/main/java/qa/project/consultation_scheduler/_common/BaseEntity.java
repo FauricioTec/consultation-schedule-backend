@@ -1,4 +1,4 @@
-package qa.project.consultation_scheduler._shared;
+package qa.project.consultation_scheduler._common;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
