@@ -51,60 +51,39 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
         Map<Integer, Map<Integer, List<FindAppointmentStrategy>>> priorityMap = new HashMap<>();
 
         priorityMap.put(0, Map.of(
-                1, List.of(
-                        new FindNextUnreservedAppointment(student, course, professor, from)
-                ),
-                2, List.of(
-                        new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
+                1, List.of(new FindNextUnreservedAppointment(student, course, professor, from)),
+                2, List.of(new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
                         new FindNextReservedAppointmentInSameWeek(student, course, professor, from, 70),
-                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)
-                ),
-                3, List.of(
-                        new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
+                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)),
+                3, List.of(new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
                         new FindNextReservedAppointmentInSameWeek(student, course, professor, from, 50),
-                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)
-                )
-        ));
+                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from))));
 
         priorityMap.put(1, Map.of(
-                1, List.of(
-                        new FindNextUnreservedAppointment(student, course, professor, from)
-                ),
-                2, List.of(
-                        new FindNextReservedAppointmentInSameWeek(student, course, professor, from, 50),
+                1, List.of(new FindNextUnreservedAppointment(student, course, professor, from)),
+                2, List.of(new FindNextReservedAppointmentInSameWeek(student, course, professor, from, 50),
                         new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
                         new FindNextUnreservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from, 70),
-                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)
-                ),
-                3, List.of(
-                        new FindNextReservedAppointmentInSameWeek(student, course, professor, from),
+                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)),
+                3, List.of(new FindNextReservedAppointmentInSameWeek(student, course, professor, from),
                         new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
                         new FindNextUnreservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from),
                         new FindNextReservedAppointmentInNextWeek(student, course, professor, from),
-                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)
-                )
-        ));
+                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from))));
 
-        priorityMap.put(2, Map.of(
-                1, List.of(
-                        new FindNextUnreservedAppointment(student, course, professor, from)
-                ),
-                2, List.of(
-                        new FindNextReservedAppointmentInSameWeek(student, course, professor, from, 35),
+        priorityMap.put(2, Map.of(1, List.of(
+                        new FindNextUnreservedAppointment(student, course, professor, from)),
+                2, List.of(new FindNextReservedAppointmentInSameWeek(student, course, professor, from, 35),
                         new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
                         new FindNextReservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from, 60),
                         new FindNextUnreservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from, 70),
-                        new FindNextUnreservedAppointment(student, course, professor, from)
-                ),
-                3, List.of(
-                        new FindNextReservedAppointmentInSameWeek(student, course, professor, from),
+                        new FindNextUnreservedAppointment(student, course, professor, from)),
+                3, List.of(new FindNextReservedAppointmentInSameWeek(student, course, professor, from),
                         new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
                         new FindNextReservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from),
                         new FindNextUnreservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from),
                         new FindNextReservedAppointmentInNextWeek(student, course, professor, from),
-                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)
-                )
-        ));
+                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from))));
 
         int attemptCount = student.getAttemptCountForCourse(course).orElseThrow(()
                 -> new RuntimeException("Student has not attempted course with ID:" + course.getId()));

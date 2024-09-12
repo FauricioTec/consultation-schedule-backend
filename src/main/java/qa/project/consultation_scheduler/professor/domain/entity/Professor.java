@@ -44,8 +44,8 @@ public class Professor extends BaseEntity {
     }
 
     public void addSchedule(Schedule schedule) {
-        if (schedules.stream().anyMatch(schedule::overlaps)) {
-            throw new IllegalArgumentException("Schedule overlaps with another schedule");
+        if (schedules.stream().anyMatch(s -> s.compareTo(schedule) == 0)) {
+            throw new RuntimeException("Schedule already exists for this professor");
         }
         schedule.setProfessor(this);
         schedules.add(schedule);

@@ -22,7 +22,7 @@ public class AddScheduleToProfessorUseCaseImpl implements AddScheduleToProfessor
             return professorRepository.save(professor).getSchedules().stream()
                     .filter(s -> s.compareTo(schedule) == 0)
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Error adding schedule to professor"));
+                    .orElse(schedule);
         } catch (Exception e) {
             throw new RuntimeException("Error adding schedule to professor", e);
         }
