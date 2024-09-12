@@ -51,7 +51,7 @@ public class Course extends BaseEntity {
     @NotNull(message = "Semester is mandatory")
     private Semester semester;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @NotBlank(message = "Course code is mandatory")
     private String code;
 
