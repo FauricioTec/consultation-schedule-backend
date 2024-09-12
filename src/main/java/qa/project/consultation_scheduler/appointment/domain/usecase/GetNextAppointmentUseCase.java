@@ -7,5 +7,5 @@ import java.util.UUID;
 
 public interface GetNextAppointmentUseCase {
 
-    Appointment getNextAppointment(UUID studentId, UUID courseId, LocalDateTime from);
+    Appointment getNextAppointment(UUID studentId, UUID courseId, UUID professorId, LocalDateTime from);
 }

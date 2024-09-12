@@ -3,7 +3,6 @@ package qa.project.consultation_scheduler.appointment.application.usecase.strate
 import lombok.AllArgsConstructor;
 import qa.project.consultation_scheduler.appointment.domain.entity.Appointment;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,9 +10,9 @@ import java.util.Optional;
 public class FindAppointmentContext {
     private final List<FindAppointmentStrategy> strategies;
 
-    public Optional<Appointment> findAppointment(LocalDateTime from) {
+    public Optional<Appointment> findAppointment() {
         for (FindAppointmentStrategy strategy : strategies) {
-            Optional<Appointment> appointment = strategy.execute(from);
+            Optional<Appointment> appointment = strategy.execute();
             if (appointment.isPresent()) {
                 return appointment;
             }

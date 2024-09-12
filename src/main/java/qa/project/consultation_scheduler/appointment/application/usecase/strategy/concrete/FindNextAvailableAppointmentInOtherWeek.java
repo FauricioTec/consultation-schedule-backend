@@ -3,6 +3,7 @@ package qa.project.consultation_scheduler.appointment.application.usecase.strate
 import qa.project.consultation_scheduler.appointment.application.usecase.strategy.FindAppointmentStrategy;
 import qa.project.consultation_scheduler.appointment.domain.entity.Appointment;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
+import qa.project.consultation_scheduler.professor.domain.entity.Professor;
 import qa.project.consultation_scheduler.student.domain.entity.Student;
 
 import java.time.DayOfWeek;
@@ -13,14 +14,14 @@ import java.util.Optional;
 
 public class FindNextAvailableAppointmentInOtherWeek extends FindAppointmentStrategy {
 
-    public FindNextAvailableAppointmentInOtherWeek(Student student, Course course) {
-        super(student, course);
+    public FindNextAvailableAppointmentInOtherWeek(Student student, Course course, Professor professor, LocalDateTime from) {
+        super(student, course, professor, from);
     }
 
     @Override
-    public Optional<Appointment> execute(LocalDateTime from) {
-        FindNextUnreservedAppointment findNextUnreservedAppointment = new FindNextUnreservedAppointment(student, course);
+    public Optional<Appointment> execute() {
         LocalDateTime nextWeekStart = from.with(TemporalAdjusters.next(DayOfWeek.MONDAY)).with(LocalTime.MIN);
-        return findNextUnreservedAppointment.execute(nextWeekStart);
+        FindNextUnreservedAppointment findNextUnreservedAppointment = new FindNextUnreservedAppointment(student, course, professor, nextWeekStart);
+        return findNextUnreservedAppointment.execute();
     }
 }

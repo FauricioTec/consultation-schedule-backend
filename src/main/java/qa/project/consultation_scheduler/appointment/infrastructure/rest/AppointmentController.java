@@ -31,8 +31,9 @@ public class AppointmentController {
     @GetMapping("/next")
     public ResponseEntity<Appointment> getNextAppointment(@RequestParam UUID studentId,
                                                           @RequestParam UUID courseId,
+                                                          @RequestParam UUID professorId,
                                                           @RequestParam(required = false) LocalDateTime from) {
-        Appointment createdAppointment = appointmentService.getNextAppointment(studentId, courseId, from);
+        Appointment createdAppointment = appointmentService.getNextAppointment(studentId, courseId, professorId, from);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(createdAppointment.getId()).toUri();

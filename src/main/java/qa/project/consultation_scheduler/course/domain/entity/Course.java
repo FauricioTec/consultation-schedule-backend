@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -86,6 +88,22 @@ public class Course extends BaseEntity {
             count += professor.getAvailableAppointmentsCount(start, semester.getEndDate().atTime(LocalTime.MAX));
         }
         return count;
+    }
+
+    public Optional<Professor> getProfessorById(UUID professorId) {
+        return professors.stream()
+                .filter(p -> p.getId().equals(professorId))
+                .findFirst();
+    }
+
+    @JsonIgnore
+    public int getAppointmentAvailabilityRate() {
+        int totalAppointments = getTotalAppointments();
+        int availableAppointments = getAvailableAppointments();
+        if (totalAppointments == 0) {
+            return 0;
+        }
+        return availableAppointments / (totalAppointments + availableAppointments) * 100;
     }
 
     public void updateSemesterEndDate(LocalDate endDate) {

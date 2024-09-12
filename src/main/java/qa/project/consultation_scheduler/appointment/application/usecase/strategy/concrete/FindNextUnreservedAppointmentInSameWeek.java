@@ -3,25 +3,34 @@ package qa.project.consultation_scheduler.appointment.application.usecase.strate
 import qa.project.consultation_scheduler.appointment.application.usecase.strategy.FindAppointmentStrategy;
 import qa.project.consultation_scheduler.appointment.domain.entity.Appointment;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
+import qa.project.consultation_scheduler.professor.domain.entity.Professor;
 import qa.project.consultation_scheduler.student.domain.entity.Student;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.WeekFields;
 import java.util.Optional;
 
 public class FindNextUnreservedAppointmentInSameWeek extends FindAppointmentStrategy {
 
-    public FindNextUnreservedAppointmentInSameWeek(Student student, Course course) {
-        super(student, course);
+    public FindNextUnreservedAppointmentInSameWeek(Student student, Course course, Professor professor, LocalDateTime from) {
+        super(student, course, professor, from);
     }
 
     @Override
-    public Optional<Appointment> execute(LocalDateTime from) {
-        FindNextUnreservedAppointment findNextUnreservedAppointment = new FindNextUnreservedAppointment(student, course);
-        Optional<Appointment> appointment = findNextUnreservedAppointment.execute(from);
+    public Optional<Appointment> execute() {
+        LocalDateTime endOfWeek = from.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY)).with(LocalTime.MAX);
+
+        FindNextUnreservedAppointment findNextUnreservedAppointment = new FindNextUnreservedAppointment(student, course, professor, from, endOfWeek);
+
+        Optional<Appointment> appointment = findNextUnreservedAppointment.execute();
+
         if (appointment.isPresent() && isSameWeek(from, appointment.get().getStart())) {
             return appointment;
         }
+
         return Optional.empty();
     }
 

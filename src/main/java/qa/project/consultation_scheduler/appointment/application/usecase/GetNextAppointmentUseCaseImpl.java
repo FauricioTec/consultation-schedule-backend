@@ -10,6 +10,7 @@ import qa.project.consultation_scheduler.appointment.domain.repository.Appointme
 import qa.project.consultation_scheduler.appointment.domain.usecase.GetNextAppointmentUseCase;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
 import qa.project.consultation_scheduler.course.domain.repository.CourseRepository;
+import qa.project.consultation_scheduler.professor.domain.entity.Professor;
 import qa.project.consultation_scheduler.student.domain.entity.Student;
 import qa.project.consultation_scheduler.student.domain.repository.StudentRepository;
 
@@ -25,9 +26,10 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
     private final CourseRepository courseRepository;
 
     @Override
-    public Appointment getNextAppointment(UUID studentId, UUID courseId, LocalDateTime from) {
+    public Appointment getNextAppointment(UUID studentId, UUID courseId, UUID professorId, LocalDateTime from) {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new RuntimeException("Course not found"));
+        Professor professor = course.getProfessorById(professorId).orElseThrow(() -> new RuntimeException("Professor not found"));
 
         validateEnrollmentAndAvailability(student, course);
 
@@ -35,7 +37,7 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
 
         LocalDateTime startDateTime = from == null ? LocalDateTime.now() : from;
 
-        Appointment appointment = findAppointmentByPriority(student, course, startDateTime)
+        Appointment appointment = findAppointmentByPriority(student, course, professor, startDateTime)
                 .orElseThrow(() -> new RuntimeException("No available appointments"));
 
         try {
@@ -45,34 +47,63 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
         }
     }
 
-    private Optional<Appointment> findAppointmentByPriority(Student student, Course course, LocalDateTime from) {
+    private Optional<Appointment> findAppointmentByPriority(Student student, Course course, Professor professor, LocalDateTime from) {
         Map<Integer, Map<Integer, List<FindAppointmentStrategy>>> priorityMap = new HashMap<>();
 
+        priorityMap.put(0, Map.of(
+                1, List.of(
+                        new FindNextUnreservedAppointment(student, course, professor, from)
+                ),
+                2, List.of(
+                        new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
+                        new FindNextReservedAppointmentInSameWeek(student, course, professor, from, 70),
+                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)
+                ),
+                3, List.of(
+                        new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
+                        new FindNextReservedAppointmentInSameWeek(student, course, professor, from, 50),
+                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)
+                )
+        ));
+
         priorityMap.put(1, Map.of(
-                1, List.of(new FindNextUnreservedAppointment(student, course)),
-                2, List.of(new FindNextUnreservedAppointmentInSameWeek(student, course),
-                        new FindNextReservedAppointmentInSameWeek(student, course)),
-                3, List.of(new FindNextUnreservedAppointmentInSameWeek(student, course),
-                        new FindNextAvailableAppointmentInOtherWeek(student, course))
+                1, List.of(
+                        new FindNextUnreservedAppointment(student, course, professor, from)
+                ),
+                2, List.of(
+                        new FindNextReservedAppointmentInSameWeek(student, course, professor, from, 50),
+                        new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
+                        new FindNextUnreservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from, 70),
+                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)
+                ),
+                3, List.of(
+                        new FindNextReservedAppointmentInSameWeek(student, course, professor, from),
+                        new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
+                        new FindNextUnreservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from),
+                        new FindNextReservedAppointmentInNextWeek(student, course, professor, from),
+                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)
+                )
         ));
 
         priorityMap.put(2, Map.of(
-                1, List.of(new FindNextUnreservedAppointment(student, course)),
-                2, List.of(new FindNextReservedAppointmentInSameWeek(student, course),
-                        new FindNextUnreservedAppointmentInSameWeek(student, course),
-                        new FindNextAvailableAppointmentInOtherWeek(student, course)),
-                3, List.of(new FindNextReservedAppointmentInSameWeek(student, course),
-                        new FindNextUnreservedAppointmentInSameWeek(student, course),
-                        new FindNextReservedAppointmentInNextWeek(student, course))
-        ));
-
-        priorityMap.put(3, Map.of(
-                1, List.of(new FindNextUnreservedAppointment(student, course)),
-                2, List.of(new FindNextReservedAppointmentInSameWeek(student, course),
-                        new FindNextUnreservedAppointmentInSameWeek(student, course)),
-                3, List.of(new FindNextReservedAppointmentInSameWeek(student, course),
-                        new FindNextUnreservedAppointmentInSameWeek(student, course),
-                        new FindNextReservedAppointmentInNextWeek(student, course))
+                1, List.of(
+                        new FindNextUnreservedAppointment(student, course, professor, from)
+                ),
+                2, List.of(
+                        new FindNextReservedAppointmentInSameWeek(student, course, professor, from, 35),
+                        new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
+                        new FindNextReservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from, 60),
+                        new FindNextUnreservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from, 70),
+                        new FindNextUnreservedAppointment(student, course, professor, from)
+                ),
+                3, List.of(
+                        new FindNextReservedAppointmentInSameWeek(student, course, professor, from),
+                        new FindNextUnreservedAppointmentInSameWeek(student, course, professor, from),
+                        new FindNextReservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from),
+                        new FindNextUnreservedAppointmentInSameWeekWithOtherProfessor(student, course, professor, from),
+                        new FindNextReservedAppointmentInNextWeek(student, course, professor, from),
+                        new FindNextAvailableAppointmentInOtherWeek(student, course, professor, from)
+                )
         ));
 
         int attemptCount = student.getAttemptCountForCourse(course).orElseThrow(()
@@ -83,7 +114,7 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
         List<FindAppointmentStrategy> priorityStrategies = priorityMap.getOrDefault(attemptCount, priorityMap.get(3)).get(starRating);
 
         FindAppointmentContext context = new FindAppointmentContext(priorityStrategies);
-        return context.findAppointment(from);
+        return context.findAppointment();
     }
 
     private void validateEnrollmentAndAvailability(Student student, Course course) {

@@ -4,6 +4,7 @@ import qa.project.consultation_scheduler.appointment.application.usecase.strateg
 import qa.project.consultation_scheduler.appointment.domain.entity.Appointment;
 import qa.project.consultation_scheduler.appointment.domain.factory.AppointmentFactory;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
+import qa.project.consultation_scheduler.professor.domain.entity.Professor;
 import qa.project.consultation_scheduler.professor.domain.entity.Schedule;
 import qa.project.consultation_scheduler.student.domain.entity.Student;
 
@@ -17,29 +18,46 @@ import java.util.Optional;
 
 public class FindNextUnreservedAppointment extends FindAppointmentStrategy {
 
-    public FindNextUnreservedAppointment(Student student, Course course) {
-        super(student, course);
+    private final List<Schedule> consultationSchedules;
+    private final LocalDateTime to;
+
+    public FindNextUnreservedAppointment(Student student, Course course, Professor professor, LocalDateTime from) {
+        super(student, course, professor, from);
+        this.consultationSchedules = professor.getSchedules().stream().sorted().toList();
+        this.to = course.getSemester().getEndDate().atTime(LocalTime.MAX);
+    }
+
+    public FindNextUnreservedAppointment(Student student, Course course, Professor professor, LocalDateTime from, LocalDateTime to) {
+        super(student, course, professor, from);
+        this.consultationSchedules = professor.getSchedules().stream().sorted().toList();
+        this.to = to.isAfter(course.getSemester().getEndDate().atTime(LocalTime.MAX)) ?
+                course.getSemester().getEndDate().atTime(LocalTime.MAX) : to;
+    }
+
+    public FindNextUnreservedAppointment(Student student, Course course, Professor professor,
+                                         List<Schedule> consultationSchedules,
+                                         LocalDateTime from,
+                                         LocalDateTime to) {
+        super(student, course, professor, from);
+        this.consultationSchedules = consultationSchedules.stream().sorted().toList();
+        this.to = to.isAfter(course.getSemester().getEndDate().atTime(LocalTime.MAX)) ?
+                course.getSemester().getEndDate().atTime(LocalTime.MAX) : to;
+    }
+
+    public FindNextUnreservedAppointment(Student student, Course course, Professor professor, List<Schedule> consultationSchedules, LocalDateTime from) {
+        this(student, course, professor, consultationSchedules, from, course.getSemester().getEndDate().atTime(LocalTime.MAX));
     }
 
     @Override
-    public Optional<Appointment> execute(LocalDateTime from) {
-        List<Schedule> consultationSchedules = course.getProfessors().stream()
-                .filter(professor -> professor.getAvailableAppointmentsCount(from, course.getSemester().getEndDate().atTime(LocalTime.MAX)) > 0)
-                .flatMap(professor -> professor.getSchedules().stream())
-                .sorted()
-                .toList();
-
+    public Optional<Appointment> execute() {
         if (consultationSchedules.isEmpty()) {
             return Optional.empty();
         }
 
-        LocalDateTime currentDateTime = from;
-        LocalDateTime endOfSemester = course.getSemester().getEndDate().atTime(LocalTime.MAX);
+        LocalDateTime currentDateTime = adjustStartDateTime(from);
 
-        currentDateTime = adjustStartDateTime(currentDateTime);
-
-        while (currentDateTime.isBefore(endOfSemester)) {
-            Optional<Appointment> appointment = findAvailableSlotInSchedules(consultationSchedules, currentDateTime, student, course);
+        while (currentDateTime.isBefore(to)) {
+            Optional<Appointment> appointment = findAvailableSlotInSchedules(currentDateTime);
 
             if (appointment.isPresent()) {
                 return appointment;
@@ -62,11 +80,10 @@ public class FindNextUnreservedAppointment extends FindAppointmentStrategy {
                 currentDateTime.plusDays(1).with(LocalTime.MIN);
     }
 
-    private Optional<Appointment> findAvailableSlotInSchedules(List<Schedule> schedules, LocalDateTime
-            currentDateTime, Student student, Course course) {
-        for (Schedule schedule : schedules) {
+    private Optional<Appointment> findAvailableSlotInSchedules(LocalDateTime currentDateTime) {
+        for (Schedule schedule : consultationSchedules) {
             if (schedule.isSameDay(currentDateTime) && (schedule.startsAfter(currentDateTime) || schedule.contains(currentDateTime))) {
-                Optional<Appointment> appointment = findAppointmentSlotInSchedule(student, course, schedule, currentDateTime);
+                Optional<Appointment> appointment = findAppointmentSlotInSchedule(schedule, currentDateTime);
                 if (appointment.isPresent()) {
                     return appointment;
                 }
@@ -75,11 +92,11 @@ public class FindNextUnreservedAppointment extends FindAppointmentStrategy {
         return Optional.empty();
     }
 
-    private Optional<Appointment> findAppointmentSlotInSchedule(Student student, Course course, Schedule
-            schedule, LocalDateTime from) {
+    private Optional<Appointment> findAppointmentSlotInSchedule(Schedule
+                                                                        schedule, LocalDateTime from) {
         LocalDateTime currentDateTime = from;
         while (currentDateTime.isBefore(LocalDateTime.of(currentDateTime.toLocalDate(), schedule.getEndTime()))) {
-            Optional<Appointment> appointment = generateAppointmentSlot(student, course, schedule, currentDateTime);
+            Optional<Appointment> appointment = generateAppointmentSlot(schedule, currentDateTime);
             if (appointment.isPresent()) {
                 if (!validateOverlapping(schedule.getProfessor().getAppointments(), appointment.get())) {
                     return appointment;
@@ -92,8 +109,7 @@ public class FindNextUnreservedAppointment extends FindAppointmentStrategy {
         return Optional.empty();
     }
 
-    private Optional<Appointment> generateAppointmentSlot(Student student, Course course, Schedule
-            schedule, LocalDateTime currentDateTime) {
+    private Optional<Appointment> generateAppointmentSlot(Schedule schedule, LocalDateTime currentDateTime) {
         int slotCount = schedule.getAvailableSlots();
         int slotDurationMinutes = schedule.getDuration() / slotCount;
 

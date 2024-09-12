@@ -4,6 +4,7 @@ import qa.project.consultation_scheduler.appointment.application.usecase.strateg
 import qa.project.consultation_scheduler.appointment.domain.entity.Appointment;
 import qa.project.consultation_scheduler.appointment.domain.entity.Status;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
+import qa.project.consultation_scheduler.professor.domain.entity.Professor;
 import qa.project.consultation_scheduler.student.domain.entity.Student;
 
 import java.time.DayOfWeek;
@@ -15,12 +16,12 @@ import java.util.Optional;
 
 public class FindNextReservedAppointmentInNextWeek extends FindAppointmentStrategy {
 
-    public FindNextReservedAppointmentInNextWeek(Student student, Course course) {
-        super(student, course);
+    public FindNextReservedAppointmentInNextWeek(Student student, Course course, Professor professor, LocalDateTime from) {
+        super(student, course, professor, from);
     }
 
     @Override
-    public Optional<Appointment> execute(LocalDateTime from) {
+    public Optional<Appointment> execute() {
         List<Appointment> reservedAppointments = course.getAppointments().stream()
                 .filter(appointment -> appointment.getStatus() == Status.ACCEPTED)
                 .toList();
@@ -31,6 +32,7 @@ public class FindNextReservedAppointmentInNextWeek extends FindAppointmentStrate
         Optional<Appointment> appointment = reservedAppointments.stream()
                 .filter(reservedAppointment -> reservedAppointment.getStart().isAfter(nextMonday))
                 .filter(reservedAppointment -> reservedAppointment.getStart().isBefore(nextSunday))
+                .filter(reservedAppointment -> reservedAppointment.getProfessor().equals(professor))
                 .filter(reservedAppointment -> !reservedAppointment.getStudent().equals(student))
                 .findFirst();
 
