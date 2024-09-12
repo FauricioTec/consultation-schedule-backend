@@ -79,6 +79,9 @@ public class Schedule extends BaseEntity implements Comparable<Schedule> {
     }
 
     public boolean overlaps(Schedule schedule) {
+        if (!this.dayOfWeek.equals(schedule.dayOfWeek)) {
+            return false;
+        }
         return this.startTime.isBefore(schedule.endTime) && this.endTime.isAfter(schedule.startTime);
     }
 
