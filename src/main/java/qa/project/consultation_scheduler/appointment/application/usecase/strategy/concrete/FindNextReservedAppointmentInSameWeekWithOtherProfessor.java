@@ -7,6 +7,7 @@ import qa.project.consultation_scheduler.professor.domain.entity.Professor;
 import qa.project.consultation_scheduler.student.domain.entity.Student;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,10 +32,12 @@ public class FindNextReservedAppointmentInSameWeekWithOtherProfessor extends Fin
 
         List<Professor> professors = course.getProfessors().stream()
                 .filter(p -> !p.equals(professor))
+                .filter(p -> p.getAvailableAppointmentsCount(from, course.getSemester().getEndDate().atTime(LocalTime.MAX)) > 0)
                 .toList();
 
         for (Professor professor : professors) {
-            FindNextReservedAppointmentInSameWeek findNextReservedAppointmentInSameWeek = new FindNextReservedAppointmentInSameWeek(student, course, professor, from);
+            FindNextReservedAppointmentInSameWeek findNextReservedAppointmentInSameWeek =
+                    new FindNextReservedAppointmentInSameWeek(student, course, professor, from);
             Optional<Appointment> appointment = findNextReservedAppointmentInSameWeek.execute();
             if (appointment.isPresent()) {
                 return appointment;
