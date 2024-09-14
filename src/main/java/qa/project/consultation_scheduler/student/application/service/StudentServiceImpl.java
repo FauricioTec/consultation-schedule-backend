@@ -1,9 +1,9 @@
 package qa.project.consultation_scheduler.student.application.service;
 
 import lombok.Builder;
-import qa.project.consultation_scheduler.student.application.usecase.*;
 import qa.project.consultation_scheduler.student.domain.entity.Enrollment;
 import qa.project.consultation_scheduler.student.domain.entity.Student;
+import qa.project.consultation_scheduler.student.domain.usecase.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -11,14 +11,14 @@ import java.util.UUID;
 @Builder
 public class StudentServiceImpl implements StudentService {
 
-    private final CreateStudentUseCaseImpl createStudentUseCase;
-    private final GetAllStudentsUseCaseImpl getAllStudentsUseCase;
-    private final GetStudentByIdUseCaseImpl getStudentByIdUseCase;
-    private final EnrollStudentUseCaseImpl enrollStudentUseCase;
-    private final GetFilteredStudentsUseCaseImpl getFilteredStudentsUseCase;
-    private final GetAllEnrollmentsUseCaseImpl getAllEnrollmentsUseCase;
-    private final GetEnrollmentByIdUseCaseImpl getEnrollmentByIdUseCase;
-    private final UpdateStarRatingUseCaseImpl updateStarRatingUseCase;
+    private final CreateStudentUseCase createStudentUseCase;
+    private final GetAllStudentsUseCase getAllStudentsUseCase;
+    private final GetStudentByIdUseCase getStudentByIdUseCase;
+    private final EnrollStudentUseCase enrollStudentUseCase;
+    private final GetFilteredStudentsUseCase getFilteredStudentsUseCase;
+    private final GetAllEnrollmentsUseCase getAllEnrollmentsUseCase;
+    private final GetEnrollmentByIdUseCase getEnrollmentByIdUseCase;
+    private final UpdateStarRatingUseCase updateStarRatingUseCase;
 
     @Override
     public Student createStudent(Student student) {
