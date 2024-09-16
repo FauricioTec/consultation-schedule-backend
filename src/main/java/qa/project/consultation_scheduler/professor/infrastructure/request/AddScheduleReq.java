@@ -1,5 +1,6 @@
 package qa.project.consultation_scheduler.professor.infrastructure.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import jakarta.validation.constraints.AssertTrue;
@@ -19,6 +20,7 @@ public record AddScheduleReq(
         @ValidAvailableSlots int availableSlots
 ) {
     @AssertTrue(message = "Start time must be before end time")
+    @JsonIgnore
     public boolean isStartTimeBeforeEndTime() {
         return startTime != null && endTime != null && startTime.isBefore(endTime);
     }
