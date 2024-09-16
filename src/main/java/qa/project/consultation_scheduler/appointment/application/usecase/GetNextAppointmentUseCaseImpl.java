@@ -90,6 +90,8 @@ public class GetNextAppointmentUseCaseImpl implements GetNextAppointmentUseCase 
         int starRating = student.getStarRatingForCourse(course).orElseThrow(()
                 -> new RuntimeException("Student has not rated course with ID:" + course.getId()));
 
+        attemptCount = Math.min(attemptCount, 2);
+
         List<FindAppointmentStrategy> priorityStrategies = priorityMap.getOrDefault(attemptCount, Map.of()).getOrDefault(starRating, List.of());
 
         FindAppointmentContext context = new FindAppointmentContext(priorityStrategies);
