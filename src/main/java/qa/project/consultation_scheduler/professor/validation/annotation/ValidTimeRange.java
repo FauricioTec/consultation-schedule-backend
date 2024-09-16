@@ -2,7 +2,6 @@ package qa.project.consultation_scheduler.professor.validation.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import qa.project.consultation_scheduler.professor.validation.validator.ScheduleDayValidator;
 import qa.project.consultation_scheduler.professor.validation.validator.TimeRangeValidator;
 
 import java.lang.annotation.ElementType;

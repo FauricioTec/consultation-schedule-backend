@@ -3,7 +3,6 @@ package qa.project.consultation_scheduler.professor.validation.annotation;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import qa.project.consultation_scheduler.professor.validation.validator.ScheduleDayValidator;
-import qa.project.consultation_scheduler.student.validation.validator.AttemptCountValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

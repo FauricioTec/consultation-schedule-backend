@@ -1,6 +1,5 @@
 package qa.project.consultation_scheduler.course.infrastructure.request;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import qa.project.consultation_scheduler.course.domain.entity.Course;

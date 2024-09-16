@@ -3,7 +3,6 @@ package qa.project.consultation_scheduler.appointment.domain.factory;
 import qa.project.consultation_scheduler.appointment.domain.entity.Appointment;
 import qa.project.consultation_scheduler.course.domain.entity.Course;
 import qa.project.consultation_scheduler.professor.domain.entity.Professor;
-import qa.project.consultation_scheduler.professor.domain.entity.Schedule;
 import qa.project.consultation_scheduler.student.domain.entity.Student;
 
 import java.time.Duration;

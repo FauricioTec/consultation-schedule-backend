@@ -3,7 +3,6 @@ package qa.project.consultation_scheduler.course.validation.annotation;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import qa.project.consultation_scheduler.course.validation.validator.DateRangeValidator;
-import qa.project.consultation_scheduler.professor.validation.validator.TimeRangeValidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
