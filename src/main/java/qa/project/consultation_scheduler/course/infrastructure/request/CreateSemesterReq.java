@@ -2,6 +2,7 @@ package qa.project.consultation_scheduler.course.infrastructure.request;
 
 import jakarta.validation.constraints.NotNull;
 import qa.project.consultation_scheduler.course.domain.entity.Semester;
+import qa.project.consultation_scheduler.course.domain.factory.SemesterFactory;
 
 import java.time.LocalDate;
 
@@ -15,6 +16,6 @@ public record CreateSemesterReq(@NotNull(message = "Start date is required") Loc
     }
 
     public Semester toEntity() {
-        return new Semester(startDate, endDate);
+        return SemesterFactory.create(startDate, endDate);
     }
 }
